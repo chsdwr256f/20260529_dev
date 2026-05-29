@@ -493,6 +493,9 @@ def is_safe_select_sparql(query):
     return not any(word in q for word in blocked)
 
 def generate_sparql_from_question(question):
+
+    client, openai_available, openai_error = get_openai_client()
+
     ontology_summary = """
 Classes:
 Programme, Course, School, Department, Staff, Person, Student,
