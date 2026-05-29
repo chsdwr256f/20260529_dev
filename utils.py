@@ -442,6 +442,95 @@ def matched_entities_to_text(matched_entities, max_rows=10):
 
     return "\n".join(lines)
 
+def is_safe_select_sparql(query):
+    q = query.strip().lower()
+
+    blocked = [
+        "insert", "delete", "drop", "clear", "create",
+        "load", "copy", "move", "add", "service"
+    ]
+
+    if not q.startswith("prefix") and not q.startswith("select"):
+        return False
+
+    if "select" not in q:
+        return False
+
+    return not any(word in q for word in blocked)
+
+def generate_sparql_from_question(question):
+    ontology_summary = """
+Classes:
+Programme, Course, School, Department, Staff, Person, Student,
+Research, ResearchProject, ResearchCentre, Policy, Document,
+Event, Scholarship, ContactPoint, OrganisationUnit, Topic, WebPage
+
+Object properties:
+offersProgramme, offersCourse, teachesCourse, hasPrerequisite,
+hasContactPoint, hasScholarship, memberOf, relatedToTopic,
+containedInDocument, governedByPolicy, eligibleForCourse,
+availableInYear
+
+Common predicates:
+rdf:type, rdfs:label, rdfs:comment, dcterms:source
+
+Namespaces:
+ont: https://www.ed.ac.uk/ontology/organisation#
+kg: https://www.ed.ac.uk/kg/
+"""
+
+    prompt = f"""
+You are generating SPARQL for a University of Edinburgh RDF knowledge graph.
+
+Use only the ontology below:
+{ontology_summary}
+
+Task:
+Convert the user question into one safe SPARQL SELECT query.
+
+Strict rules:
+- Return SPARQL only.
+- Use SELECT only.
+- Do not use INSERT, DELETE, DROP, LOAD, SERVICE, UPDATE, or CONSTRUCT.
+- Prefer rdfs:label and rdfs:comment keyword matching if exact relationships may not exist.
+- Use FILTER(CONTAINS(LCASE(STR(?label)), "...")) for keyword matching.
+- Include dcterms:source if useful.
+- Use LIMIT 20.
+- Do not invent new classes or properties.
+- Only restrict rdf:type when highly certain.
+- If uncertain, use variable type matching:
+    ?entity rdf:type ?type
+- Avoid overly restrictive queries that may miss valid entities.
+
+User question:
+{question}
+"""
+
+    try:
+        response = client.responses.create(
+            model="gpt-5.4-mini",
+            input=prompt,
+            temperature=0
+        )
+
+        sparql = response.output_text.strip()
+
+        sparql = (
+            sparql
+            .replace("```sparql", "")
+            .replace("```", "")
+            .strip()
+        )
+
+        if not is_safe_select_sparql(sparql):
+            return None, "Generated query was blocked because it was not a safe SELECT query."
+
+        return sparql, None
+
+    except Exception as e:
+        return None, str(e)
+
+
 def run_generated_sparql(graph, question):
     sparql_query, error = generate_sparql_from_question(question)
 
