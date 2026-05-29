@@ -9,8 +9,6 @@ from utils import (
     retrieve_mentioned_entities,
     retrieve_relevant_triples,
     run_generated_sparql,
-    is_safe_select_sparql,
-    generate_sparql_from_question,
     sparql_results_to_entities_df,
     triples_to_text,
     matched_entities_to_text,
@@ -42,7 +40,17 @@ if "user_question" not in st.session_state:
 def clear_question():
     st.session_state["user_question"] = ""
 
-    for key in ["evidence_rows", "matched_entities", "answer"]:
+    for key in [
+        "evidence_rows",
+        "matched_entities",
+        "evidence_entities",
+        "answer",
+        "answer_error",
+        "topic_result",
+        "sparql_df",
+        "generated_query",
+        "sparql_error",
+    ]:
         st.session_state.pop(key, None)
 
 
@@ -82,20 +90,20 @@ if st.button("Answer question"):
                 top_k=8
             )
 
-            # 3. run LLM-assisted SPARQL retrieval
+            # 3. retrieve supporting entities: contextual entity types only
+            supporting_entities = retrieve_mentioned_entities(
+                entities_df,
+                mentioned_entities,
+                top_k=8
+            )
+
+            # 4. run LLM-assisted SPARQL retrieval
             sparql_df, generated_query, sparql_error = run_generated_sparql(
                 graph,
                 user_question
             )
 
             sparql_entities = sparql_results_to_entities_df(sparql_df)
-
-            # 4. retrieve supporting entities: contextual entity types only
-            supporting_entities = retrieve_mentioned_entities(
-                entities_df,
-                mentioned_entities,
-                top_k=8
-            )
 
             # 5. combine for evidence only
             evidence_entities = pd.concat(
@@ -108,7 +116,6 @@ if st.button("Answer question"):
                 graph,
                 evidence_entities
             )
-            st.session_state["evidence_rows"] = evidence_rows
 
             # 7. convert evidence to text
             context_text = triples_to_text(evidence_rows)
@@ -122,7 +129,7 @@ if st.button("Answer question"):
                 ignore_index=True
             ).drop_duplicates(subset=["uri"])
 
-            matched_entities_text = matched_entities_to_text(matched_entities)
+            matched_entities_text = matched_entities_to_text(combined_retrieved_entities)
 
             # 9. ask LLM
             answer, error = ask_llm(
@@ -131,11 +138,15 @@ if st.button("Answer question"):
                 context_text
             )
 
-            st.session_state["evidence_rows"] = evidence_rows
+            st.session_state["topic_result"] = topic_result
             st.session_state["matched_entities"] = matched_entities
+            st.session_state["evidence_entities"] = evidence_entities
+            st.session_state["evidence_rows"] = evidence_rows
+            st.session_state["sparql_df"] = sparql_df
+            st.session_state["generated_query"] = generated_query
+            st.session_state["sparql_error"] = sparql_error
             st.session_state["answer"] = answer
             st.session_state["answer_error"] = error
-            st.session_state["topic_result"] = topic_result
 
 if "answer" in st.session_state:
     st.markdown("### Answer")
@@ -157,20 +168,59 @@ if "answer" in st.session_state:
         st.write("Retrieval concepts:", topic_result.get("retrieval_concepts", []))
 
     with st.expander("Entities retrieval", expanded=False):
-        matched_entities = st.session_state.get("matched_entities")
 
-        if matched_entities is None or matched_entities.empty:
+        evidence_entities = st.session_state.get("evidence_entities")
+
+        if evidence_entities is None or evidence_entities.empty:
             st.info("No relevant entities were retrieved from the graph.")
+
         else:
-            display_df = matched_entities[
+            display_df = evidence_entities.copy()
+
+            if "match_score" not in display_df.columns:
+                display_df["match_score"] = ""
+
+            for col in ["label", "type", "source", "match_score"]:
+                if col not in display_df.columns:
+                    display_df[col] = ""
+
+            display_df = display_df[
                 ["label", "type", "source", "match_score"]
-            ].copy()
+            ]
 
             st.dataframe(
                 display_df,
                 width="stretch",
                 height=220
             )
+
+    sparql_df = st.session_state.get("sparql_df")
+    generated_query = st.session_state.get("generated_query")
+    sparql_error = st.session_state.get("sparql_error")
+
+    # ---- LLM SPARQL retrieval ----
+    with st.expander("LLM-assisted SPARQL retrieval", expanded=False):
+
+        if generated_query:
+            st.markdown("#### Generated SPARQL query")
+            st.code(
+                generated_query,
+                language="sparql"
+            )
+
+        if sparql_error:
+            st.error(sparql_error)
+
+        elif sparql_df is not None and not sparql_df.empty:
+            st.markdown("#### SPARQL query result")
+            st.dataframe(
+                sparql_df,
+                width="stretch",
+                height=220
+            )
+
+        else:
+            st.info("No SPARQL results found.")
 
     evidence_rows = st.session_state.get("evidence_rows", [])
     evidence_df = pd.DataFrame(evidence_rows)
@@ -182,7 +232,8 @@ if "answer" in st.session_state:
             triples_display = evidence_df.copy()
 
             for col in ["subject", "predicate", "object"]:
-                triples_display[col] = triples_display[col].apply(shorten_uri)
+                if col in triples_display.columns:
+                    triples_display[col] = triples_display[col].apply(shorten_uri)
 
             st.dataframe(
                 triples_display,
