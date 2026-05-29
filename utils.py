@@ -477,18 +477,51 @@ def classify_question_topic(question):
     prompt = f"""
 You are classifying questions for a university knowledge graph.
 
+Identify:
+
+1. answer_types: The main type of answer the user wants (must select from topic list). 
+For example:
+- "which courses" -> "course"
+- "who teaches" -> "staff"
+- "what requirements" -> "requirement"
+
+2. mentioned_entities: Specific named entities explicitly mentioned or domain topics when they are the object of the search. These are important retrieval anchors.
+Examples: Chemistry 1A, School of Informatics
+
+3. retrieval_concepts: Up to 3 important semantic concepts useful for ranking and graph traversal.
+- prefer single words, maximum two words
+- do not include entity types
+- Examples: teaching, semester, eligibility, contact
+
+Select topics from this list only:
+{TOPICS}
+
+Important rules:
+- A question may involve multiple ontology classes.
+- Mentioned entities are usually more important than broad topics.
+
 Return JSON only:
 {{
-  "answer_types": ["..."],
-  "mentioned_entities": ["..."],
-  "retrieval_concepts": ["..."]
+  "answer_types": "...",
+  "mentioned_entities": ["...", "..."],
+  "concepts": ["...", "..."]
 }}
 
-Select answer types from this list only:
-{TOPICS}
+Example:
+
+Question:
+Which staff members are teaching Chemistry 1A this semester?
+
+Output:
+{{
+  "answer_types": ["Staff"],
+  "mentioned_entities": ["Chemistry 1A"],
+  "retrieval_concepts": ["teaching", "semester"]
+}}
 
 Question:
 {question}
+
 """
 
     try:
@@ -524,7 +557,19 @@ def ask_llm(question, matched_entities_text, triples_context):
 
     prompt = f"""
 You are assisting users with a university domain question.
-Answer the user's question only using the provided knowledge graph context.
+Answer the user's question ONLY using the provided knowledge graph context.
+
+Rules:
+- Do not invent information.
+- If the KG contains direct evidence, answer clearly.
+- If the KG does NOT contain enough information for a definitive answer:
+    - say that the information is not fully available,
+    - BUT provide the most relevant related entities, webpages, or source links.
+- If eligibility, requirements, or regulations cannot be confirmed, direct the user to the relevant programme or course pages.
+- Prefer helping the user navigate to relevant information rather than refusing the question.
+- Mention related courses, programmes, schools, or policies if useful.
+- Course pages would contain information including school, college, level, credits, availability for who, description, Pre-requisites, assessment, exam, contact information.
+- Keep answers concise and factual.
 
 Evidence triples:
 {triples_context}
@@ -534,6 +579,7 @@ Matched entities:
 
 Question:
 {question}
+
 """
 
     try:
