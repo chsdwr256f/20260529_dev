@@ -377,9 +377,24 @@ def retrieve_mentioned_entities(entities_df, mentioned_entities, top_k=10):
     )
 
 
-def retrieve_relevant_triples(graph, matched_entities):
+def retrieve_relevant_triples(
+    graph,
+    matched_entities,
+    max_outgoing=8,
+    max_incoming=8
+):
     if matched_entities is None or matched_entities.empty:
         return []
+
+    metadata_predicates = {
+        str(RDFS.label),
+        str(RDFS.comment),
+        str(RDF.type),
+        str(DCTERMS.source),
+        str(SKOS.prefLabel),
+        str(DCTERMS.title),
+        str(DCTERMS.description),
+    }
 
     evidence_rows = []
 
@@ -391,7 +406,15 @@ def retrieve_relevant_triples(graph, matched_entities):
 
         node = URIRef(str(uri))
 
+        outgoing_count = 0
+
         for s, p, o in graph.triples((node, None, None)):
+            if str(p) in metadata_predicates:
+                continue
+
+            if outgoing_count >= max_outgoing:
+                break
+
             evidence_rows.append({
                 "subject": get_label(graph, s),
                 "predicate": get_label(graph, p),
@@ -399,13 +422,25 @@ def retrieve_relevant_triples(graph, matched_entities):
                 "object_uri": str(o) if isinstance(o, URIRef) else ""
             })
 
+            outgoing_count += 1
+
+        incoming_count = 0
+
         for s, p, o in graph.triples((None, None, node)):
+            if str(p) in metadata_predicates:
+                continue
+
+            if incoming_count >= max_incoming:
+                break
+
             evidence_rows.append({
                 "subject": get_label(graph, s),
                 "predicate": get_label(graph, p),
                 "object": get_label(graph, o),
-                "object_uri": str(o)
+                "object_uri": str(o) if isinstance(o, URIRef) else ""
             })
+
+            incoming_count += 1
 
     return evidence_rows
 
