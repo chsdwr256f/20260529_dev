@@ -751,7 +751,7 @@ Rules:
 - Prefer helping the user navigate to relevant information rather than refusing the question.
 - Mention related courses, programmes, schools, or policies if useful.
 - Course pages would contain information including school, college, level, credits, availability for who, description, Pre-requisites, assessment, exam, contact information.
-- Keep answers concise and factual.
+- Keep answers concise and factual. Explain which entities support the answer.
 
 Evidence triples:
 {triples_context}
