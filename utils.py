@@ -442,6 +442,26 @@ def matched_entities_to_text(matched_entities, max_rows=10):
 
     return "\n".join(lines)
 
+def run_generated_sparql(graph, question):
+    sparql_query, error = generate_sparql_from_question(question)
+
+    if error:
+        return None, None, error
+
+    try:
+        results = graph.query(sparql_query)
+
+        rows = []
+        for row in results:
+            rows.append({
+                str(var): str(value)
+                for var, value in zip(results.vars, row)
+            })
+
+        return pd.DataFrame(rows), sparql_query, None
+
+    except Exception as e:
+        return None, sparql_query, str(e)
 
 # -----------------------------
 # LLM

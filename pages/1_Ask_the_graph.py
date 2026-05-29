@@ -8,6 +8,7 @@ from utils import (
     retrieve_relevant_entities,
     retrieve_mentioned_entities,
     retrieve_relevant_triples,
+    run_generated_sparql,
     triples_to_text,
     matched_entities_to_text,
     ask_llm,
@@ -62,39 +63,65 @@ if st.button("Answer question"):
     else:
         with st.spinner("Retrieving evidence from the knowledge graph..."):
 
+            # 1. classify question topic
             topic_result = classify_question_topic(user_question)
 
             answer_types = topic_result["answer_types"]
             mentioned_entities = topic_result["mentioned_entities"]
             retrieval_concepts = topic_result["retrieval_concepts"]
 
+            # 2. retrieve matched entities: final answer type only
             matched_entities = retrieve_relevant_entities(
                 entities_df,
                 user_question,
                 answer_types=answer_types,
                 retrieval_concepts=retrieval_concepts,
-                top_k=10
+                top_k=8
             )
 
+            # 3. run LLM-assisted SPARQL retrieval
+            sparql_df, generated_query, sparql_error = run_generated_sparql(
+                graph,
+                user_question
+            )
+
+            sparql_entities = sparql_results_to_entities_df(sparql_df)
+
+            # 4. retrieve supporting entities: contextual entity types only
             supporting_entities = retrieve_mentioned_entities(
                 entities_df,
                 mentioned_entities,
-                top_k=10
+                top_k=8
             )
 
+            # 5. combine for evidence only
             evidence_entities = pd.concat(
-                [supporting_entities, matched_entities],
+                [supporting_entities, matched_entities, sparql_entities],
                 ignore_index=True
             ).drop_duplicates(subset=["uri"])
 
+            # 6. retrieve graph evidence from both matched + supporting entities
             evidence_rows = retrieve_relevant_triples(
                 graph,
                 evidence_entities
             )
+            st.session_state["evidence_rows"] = evidence_rows
 
+            # 7. convert evidence to text
             context_text = triples_to_text(evidence_rows)
+
+            # 8. combine matched + SPARQL entities for answer context
+            combined_retrieved_entities = pd.concat(
+                [
+                    matched_entities,
+                    sparql_entities
+                ],
+                ignore_index=True
+            ).drop_duplicates(subset=["uri"])
+
             matched_entities_text = matched_entities_to_text(matched_entities)
 
+            # 9. ask LLM
             answer, error = ask_llm(
                 user_question,
                 matched_entities_text,

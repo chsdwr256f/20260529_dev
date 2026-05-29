@@ -190,21 +190,16 @@ if st.button("Submit feedback"):
     else:
         feedback_row = {
             "timestamp": datetime.now().isoformat(),
-
-            "user": user_name,
             "user_type": user_type,
-
             "task_id": task_id,
-
+            "user": user_name,
+            "kg_time_seconds": tool_total_seconds,
             "kg_found": 1 if found_info == "Yes" else 0,
             "kg_steps": steps_taken,
-            "kg_time_seconds": tool_total_seconds,
-
+            "comments": feedback_comment,
             "trad_found": 1 if trad_found == "Yes" else 0,
             "trad_steps": trad_steps,
-            "trad_time_seconds": trad_total_seconds,
-
-            "comments": feedback_comment
+            "trad_time_seconds": trad_total_seconds
         }
 
         try:
