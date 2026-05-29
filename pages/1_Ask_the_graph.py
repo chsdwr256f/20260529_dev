@@ -9,6 +9,7 @@ from utils import (
     retrieve_mentioned_entities,
     retrieve_relevant_triples,
     run_generated_sparql,
+    sparql_results_to_entities_df,
     triples_to_text,
     matched_entities_to_text,
     ask_llm,
