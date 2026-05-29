@@ -552,6 +552,42 @@ def run_generated_sparql(graph, question):
     except Exception as e:
         return None, sparql_query, str(e)
 
+def sparql_results_to_entities_df(sparql_df):
+    if sparql_df is None or sparql_df.empty:
+        return pd.DataFrame(columns=["label", "type", "uri", "match_score"])
+
+    uri_cols = ["uri", "entity", "project", "course", "programme", "person", "subject"]
+    label_cols = ["label", "entityLabel", "projectLabel", "courseLabel", "programmeLabel"]
+
+    rows = []
+
+    for _, row in sparql_df.iterrows():
+        uri = ""
+
+        for col in uri_cols:
+            if col in sparql_df.columns and str(row.get(col, "")).startswith("http"):
+                uri = row.get(col, "")
+                break
+
+        if not uri:
+            continue
+
+        label = ""
+        for col in label_cols:
+            if col in sparql_df.columns and row.get(col, ""):
+                label = row.get(col, "")
+                break
+
+        rows.append({
+            "label": label if label else uri.split("/")[-1],
+            "type": "SPARQL result",
+            "uri": uri,
+            "match_score": None
+        })
+
+    return pd.DataFrame(rows)
+
+
 # -----------------------------
 # LLM
 # -----------------------------
