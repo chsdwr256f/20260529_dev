@@ -47,24 +47,23 @@ def get_openai_client():
         return None, False, str(e)
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner="Loading knowledge graph...")
 def load_graph_from_file(local_path=TTL_FILE_PATH):
     g = Graph()
     g.parse(local_path, format="turtle")
     return g
 
 
-@st.cache_data(show_spinner="Building entity index...")
-def build_entities_cache(graph_serialised):
-    g = Graph()
-    g.parse(data=graph_serialised, format="turtle")
-    return list_entity_candidates(g)
+@st.cache_resource(show_spinner="Building entity index...")
+def load_entities_from_graph():
+    graph = load_graph_from_file()
+    entities_df = list_entity_candidates(graph)
+    return entities_df
 
 
 def get_graph_and_entities():
     graph = load_graph_from_file()
-    graph_serialised = graph.serialize(format="turtle")
-    entities_df = build_entities_cache(graph_serialised)
+    entities_df = load_entities_from_graph()
     return graph, entities_df
 
 
