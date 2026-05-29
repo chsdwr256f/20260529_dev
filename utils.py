@@ -792,10 +792,26 @@ def build_ego_network(g, center_node, max_edges=60):
 def build_evidence_graph(evidence_rows):
     G = nx.DiGraph()
 
+    excluded_predicates = {
+        "label",
+        "comment",
+        "type",
+        "source",
+        "prefLabel",
+        "title",
+        "description"
+    }
+
     for row in evidence_rows:
         s = str(row["subject"])
         p = str(row["predicate"])
         o = str(row["object"])
+
+        if p in excluded_predicates:
+            continue
+
+        if s == o:
+            continue
 
         G.add_node(s, label=s)
         G.add_node(o, label=o)
