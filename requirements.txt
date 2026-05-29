@@ -1,0 +1,8 @@
+streamlit
+pandas
+rdflib
+pyvis
+networkx
+openai
+gspread
+google-auth
