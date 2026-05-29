@@ -390,7 +390,6 @@ def retrieve_relevant_triples(
         str(RDFS.label),
         str(RDFS.comment),
         str(RDF.type),
-        str(DCTERMS.source),
         str(SKOS.prefLabel),
         str(DCTERMS.title),
         str(DCTERMS.description),
