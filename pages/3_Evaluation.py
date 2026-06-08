@@ -179,7 +179,7 @@ if st.button("Submit feedback"):
         st.warning("Please enter Participant Name.")
 
     elif not task_id.strip():
-        st.warning("Please enter Task ID.")
+        st.warning("Please enter details of your query.")
 
     elif found_info is None:
         st.warning("Please indicate whether you found the information using the tool.")
