@@ -64,7 +64,7 @@ user_type = st.radio(
 )
 
 task_id = st.text_input(
-    "Query",
+    "Task Performed",
     key="eval_task_id"
 )
 
@@ -179,7 +179,7 @@ if st.button("Submit feedback"):
         st.warning("Please enter Participant Name.")
 
     elif not task_id.strip():
-        st.warning("Please enter details of your query.")
+        st.warning("Please enter details of your task.")
 
     elif found_info is None:
         st.warning("Please indicate whether you found the information using the tool.")
