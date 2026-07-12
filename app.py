@@ -16,4 +16,5 @@ Please use the pages in the sidebar:
 - **Ask the graph**: ask information-seeking questions.
 - **Browse entities**: inspect entities and their relationships.
 - **Evaluation**: Record task outcomes and provide feedback.
+- **Feedback**: Provide general feedback.
 """)
