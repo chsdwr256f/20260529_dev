@@ -5,7 +5,7 @@ import time
 import uuid
 import tempfile
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 import networkx as nx
 import pandas as pd
