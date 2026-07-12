@@ -21,6 +21,17 @@ SCOPES = [
 ]
 
 
+# -------------------------
+# Consent Gate
+# -------------------------
+
+if "evaluation_consent_given" not in st.session_state:
+    st.session_state["evaluation_consent_given"] = False
+
+if not st.session_state["evaluation_consent_given"]:
+    show_consent_dialog()
+    st.stop()
+
 @st.cache_resource
 def connect_to_gsheet():
     credentials = Credentials.from_service_account_info(

@@ -909,3 +909,182 @@ def draw_interactive_pyvis(graph_nx, height="700px", width="100%"):
         html = Path(tmp_file.name).read_text(encoding="utf-8")
 
     components.html(html, height=750, scrolling=True)
+
+
+@st.dialog("Participant Information and Consent", width="large")
+def show_consent_dialog():
+    """
+    Display the participant information sheet and obtain electronic consent.
+    Consent is retained only for the current Streamlit browser session.
+    """
+
+    st.markdown(
+        """
+### Project title
+
+**An AI-based Tool for Navigating Complex Organisations Using Knowledge Graphs**
+
+**Researcher collecting data:** Sukey Mak  
+**Principal Investigator/Supervisor:** Professor Michael Rovatsos  
+**Institution:** School of Informatics, University of Edinburgh
+
+---
+
+### What is the purpose of the study?
+
+This study evaluates an AI-based knowledge graph tool developed as part of
+an MSc Data Science dissertation at the University of Edinburgh.
+
+The study investigates whether the tool can improve the navigation and
+retrieval of information from complex organisational websites compared
+with conventional search methods. The University of Edinburgh website is
+used as the case study.
+
+### Why have I been asked to take part?
+
+You have been invited because you belong to one of the intended user groups
+of university information systems, including:
+
+- prospective students;
+- current students;
+- University staff; or
+- external stakeholders.
+
+### Do I have to take part?
+
+No. Participation is entirely voluntary. You may stop participating at any
+time before submitting your responses by closing this page. You do not need
+to provide a reason, and your rights will not be affected.
+
+Because the submitted evaluation responses are anonymised, it may not be
+possible to identify and remove an individual response after submission.
+
+### What will happen if I decide to take part?
+
+You will be asked to:
+
+1. complete information-seeking tasks using the knowledge graph tool;
+2. compare the experience with conventional search methods; and
+3. complete a short evaluation questionnaire and optionally provide comments.
+
+Participation is expected to take approximately **10–15 minutes**.
+
+No audio or video recording will take place, and no payment is provided.
+
+### What information will be collected?
+
+The study may collect:
+
+- your participant group;
+- task completion results;
+- time taken to complete tasks;
+- number of navigation steps;
+- questionnaire responses; and
+- optional written feedback.
+
+You are not required to provide your name.
+
+### Are there any risks associated with taking part?
+
+There are no significant risks associated with participation.
+
+### Are there any benefits associated with taking part?
+
+There is no direct personal benefit or payment. Your feedback may contribute
+to improving knowledge graph-based information retrieval tools and the
+usability of the system developed in this study.
+
+### What will happen to the results?
+
+The results will be used in an MSc dissertation and may be summarised in
+academic reports, presentations or publications. Findings and quotations
+will be anonymised so that participants cannot reasonably be identified.
+
+### Data protection and confidentiality
+
+The data will be processed in accordance with applicable data protection
+legislation. Evaluation data will be identified using a participant number
+rather than a name.
+
+The data will only be accessed by the researcher and the project supervisor.
+Electronic records will be stored securely using password-protected or
+University-approved storage.
+
+Consent records will be retained separately from evaluation responses where
+practicable.
+
+### Who can I contact?
+
+For questions about the study, please contact:
+
+**Researcher:** Sukey Mak  
+**Email:** s2615201@ed.ac.uk
+
+**Supervisor:** Professor Michael Rovatsos
+
+To make a complaint about the conduct of the study, contact:
+
+**inf-ethics@inf.ed.ac.uk**
+"""
+    )
+
+    st.divider()
+    st.subheader("Consent")
+
+    st.write(
+        "Please confirm each statement before continuing to the evaluation."
+    )
+
+    read_information = st.checkbox(
+        "I have read and understood the participant information above.",
+        key="consent_read_information",
+    )
+
+    voluntary = st.checkbox(
+        "I understand that participation is voluntary and that I may stop "
+        "before submitting my responses.",
+        key="consent_voluntary",
+    )
+
+    academic_use = st.checkbox(
+        "I consent to my anonymised data being used in the dissertation, "
+        "academic reports, presentations and publications.",
+        key="consent_academic_use",
+    )
+
+    future_research = st.checkbox(
+        "I consent to my anonymised data being used in future ethically "
+        "approved research.",
+        key="consent_future_research",
+    )
+
+    all_confirmed = (
+        read_information
+        and voluntary
+        and academic_use
+        and future_research
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button(
+            "I agree and continue",
+            type="primary",
+            disabled=not all_confirmed,
+            use_container_width=True,
+        ):
+            st.session_state["evaluation_consent_given"] = True
+            st.session_state["evaluation_consent_timestamp"] = (
+                datetime.now(timezone.utc).isoformat()
+            )
+            st.rerun()
+
+    with col2:
+        if st.button(
+            "I do not agree",
+            use_container_width=True,
+        ):
+            st.session_state["evaluation_consent_given"] = False
+            st.session_state["evaluation_consent_declined"] = True
+            st.rerun()
