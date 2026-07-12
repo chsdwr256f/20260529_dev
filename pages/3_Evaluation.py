@@ -75,7 +75,7 @@ user_type = st.radio(
 )
 
 task_id = st.text_input(
-    "Task ID",
+    "Task",
     key="eval_task_id"
 )
 
