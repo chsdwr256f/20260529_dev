@@ -189,6 +189,7 @@ if st.button("Submit feedback"):
         st.warning("Please enter Participant Name.")
 
     elif not task_id.strip():
+        st.warning("Please enter the task details.")
 
     elif found_info is None:
         st.warning("Please indicate whether you found the information using the tool.")
@@ -224,3 +225,4 @@ if st.button("Submit feedback"):
                 )
 
         except Exception as e:
+            st.error(f"Feedback could not be recorded: {e}")
