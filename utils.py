@@ -920,9 +920,8 @@ def show_consent_dialog():
 
     st.markdown(
         """
-### Project title
+### Project title: An AI-based Tool for Navigating Complex Organisations
 
-**An AI-based Tool for Navigating Complex Organisations**
 **Principal Investigator:** Professor Michael Rovatsos  
 **Researcher collecting data:** Sukey Mak  
 This study was certified according to the Informatics Research Ethics Process, reference number 172777. 
