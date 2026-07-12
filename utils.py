@@ -947,12 +947,7 @@ used as the case study.
 ### Why have I been asked to take part?
 
 You have been invited because you belong to one of the intended user groups
-of university information systems, including:
-
-- prospective students;
-- current students;
-- University staff; or
-- external stakeholders.
+of university information systems.
 
 ### Do I have to take part?
 
