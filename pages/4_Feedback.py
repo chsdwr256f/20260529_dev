@@ -5,7 +5,7 @@ from datetime import datetime
 import gspread
 
 from google.oauth2.service_account import Credentials
-
+from utils import show_consent_dialog
 
 st.set_page_config(
     page_title="Feedback",
@@ -18,6 +18,18 @@ SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
+
+# -------------------------
+# Consent Gate
+# -------------------------
+
+if "evaluation_consent_given" not in st.session_state:
+    st.session_state["evaluation_consent_given"] = False
+
+if not st.session_state["evaluation_consent_given"]:
+    show_consent_dialog()
+    st.stop()
+
 
 @st.cache_resource
 def connect_to_gsheet():
