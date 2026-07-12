@@ -12,13 +12,6 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("Feedback")
-
-SCOPES = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
-
 # -------------------------
 # Consent Gate
 # -------------------------
@@ -30,6 +23,13 @@ if not st.session_state["evaluation_consent_given"]:
     show_consent_dialog()
     st.stop()
 
+
+st.title("Feedback")
+
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
 
 @st.cache_resource
 def connect_to_gsheet():
