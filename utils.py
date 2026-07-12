@@ -922,13 +922,17 @@ def show_consent_dialog():
         """
 ### Project title
 
-**An AI-based Tool for Navigating Complex Organisations Using Knowledge Graphs**
-
+**An AI-based Tool for Navigating Complex Organisations**
+**Principal Investigator:** Professor Michael Rovatsos  
 **Researcher collecting data:** Sukey Mak  
-**Principal Investigator/Supervisor:** Professor Michael Rovatsos  
-**Institution:** School of Informatics, University of Edinburgh
+This study was certified according to the Informatics Research Ethics Process, reference number 172777. 
+Please take time to read the following information carefully. You should keep this page for your records. 
 
 ---
+
+### Who are the researchers?
+Student: Sukey Mak
+Supervisor: Professor Michael Rovatsos  
 
 ### What is the purpose of the study?
 
@@ -952,37 +956,19 @@ of university information systems, including:
 
 ### Do I have to take part?
 
-No. Participation is entirely voluntary. You may stop participating at any
-time before submitting your responses by closing this page. You do not need
-to provide a reason, and your rights will not be affected.
-
-Because the submitted evaluation responses are anonymised, it may not be
-possible to identify and remove an individual response after submission.
+No – participation in this study is entirely up to you. You can withdraw from the study at any time, without giving a reason. Your rights will not be affected. If you wish to withdraw, contact the PI. We will stop using your data in any publications or presentations submitted after you have withdrawn consent. However, we will keep copies of your original consent, and of your withdrawal request.
 
 ### What will happen if I decide to take part?
 
 You will be asked to:
 
-1. complete information-seeking tasks using the knowledge graph tool;
+1. complete information-seeking tasks using the tool;
 2. compare the experience with conventional search methods; and
 3. complete a short evaluation questionnaire and optionally provide comments.
 
 Participation is expected to take approximately **10–15 minutes**.
 
-No audio or video recording will take place, and no payment is provided.
-
-### What information will be collected?
-
-The study may collect:
-
-- your participant group;
-- task completion results;
-- time taken to complete tasks;
-- number of navigation steps;
-- questionnaire responses; and
-- optional written feedback.
-
-You are not required to provide your name.
+No audio or video recording will take place.
 
 ### Are there any risks associated with taking part?
 
@@ -990,41 +976,26 @@ There are no significant risks associated with participation.
 
 ### Are there any benefits associated with taking part?
 
-There is no direct personal benefit or payment. Your feedback may contribute
-to improving knowledge graph-based information retrieval tools and the
-usability of the system developed in this study.
+There is no direct benefit.
 
 ### What will happen to the results?
 
-The results will be used in an MSc dissertation and may be summarised in
-academic reports, presentations or publications. Findings and quotations
-will be anonymised so that participants cannot reasonably be identified.
+The results of this study may be summarised in published articles, reports and presentations. Quotes or key findings will be anonymized: We will remove any information that could, in our assessment, allow anyone to identify you. With your consent, information can also be used for future research. Your data may be archived for a minimum of 2 years. 
 
 ### Data protection and confidentiality
 
-The data will be processed in accordance with applicable data protection
-legislation. Evaluation data will be identified using a participant number
-rather than a name.
+Your data will be processed in accordance with Data Protection Law.  All information collected about you will be kept strictly confidential. Your data will be referred to by a unique participant number rather than by name. Your data will only be viewed by the researcher/research team.  
+All electronic data will be stored on a password-protected encrypted computer, on the School of Informatics’ secure file servers, or on the University’s secure encrypted cloud storage services (DataShare, ownCloud, or Sharepoint) and all paper records will be stored in a locked filing cabinet in the PI’s office. Your consent information will be kept separately from your responses in order to minimise risk. 
 
-The data will only be accessed by the researcher and the project supervisor.
-Electronic records will be stored securely using password-protected or
-University-approved storage.
-
-Consent records will be retained separately from evaluation responses where
-practicable.
+### What are my data protection rights?
+The University of Edinburgh is a Data Controller for the information you provide.  You have the right to access information held about you. Your right of access can be exercised in accordance Data Protection Law. You also have other rights including rights of correction, erasure and objection. For more details, including the right to lodge a complaint with the Information Commissioner’s Office, please visit www.ico.org.uk. Questions, comments and requests about your personal data can also be sent to the University Data Protection Officer at dpo@ed.ac.uk. 
+For general information about how we use your data, go to: Privacy notice | Edinburgh Research Office | Edinburgh Research Office  (https://research-office.ed.ac.uk/about/privacy-notice) 
 
 ### Who can I contact?
+If you have any further questions about the study, please contact the lead researcher, Sukey Mak (s2615201@ed.ac.uk). 
+If you wish to make a complaint about the study, please contact 
+inf-ethics@inf.ed.ac.uk. When you contact us, please provide the study title and detail the nature of your complaint.
 
-For questions about the study, please contact:
-
-**Researcher:** Sukey Mak  
-**Email:** s2615201@ed.ac.uk
-
-**Supervisor:** Professor Michael Rovatsos
-
-To make a complaint about the conduct of the study, contact:
-
-**inf-ethics@inf.ed.ac.uk**
 """
     )
 
