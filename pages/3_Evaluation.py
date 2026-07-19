@@ -100,6 +100,18 @@ steps_taken = st.number_input(
     key="eval_steps_taken"
 )
 
+st.caption("""
+**How to count steps**
+
+- Count the **initial search/query submission** as **Step 1**.
+- Each additional click or navigation action required to reach the answer counts as **one further step**.
+
+**Examples**
+- **1 step:** Type your question and the answer is displayed immediately.
+- **2 steps:** Type your question, then click one result or link to find the answer.
+- **3 steps:** Type your question, then click two links/pages before reaching the answer.
+""")
+
 st.markdown("#### Time Taken")
 
 col1, col2 = st.columns(2)
@@ -153,6 +165,18 @@ trad_steps = st.number_input(
     step=1,
     key="eval_trad_steps"
 )
+
+st.caption("""
+**How to count steps**
+
+- Count the **initial search/query submission** as **Step 1**.
+- Each additional click or navigation action required to reach the answer counts as **one further step**.
+
+**Examples**
+- **1 step:** Type your question and the answer is displayed immediately.
+- **2 steps:** Type your question, then click one result or link to find the answer.
+- **3 steps:** Type your question, then click two links/pages before reaching the answer.
+""")
 
 st.markdown("#### Time Taken")
 
