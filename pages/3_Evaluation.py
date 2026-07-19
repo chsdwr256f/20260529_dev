@@ -150,7 +150,7 @@ feedback_comment = st.text_area(
 # -----------------------------
 
 st.markdown("---")
-st.header("Traditional Search Engine Comparison")
+st.header("Traditional Search Comparison")
 
 trad_found = st.radio(
     "Did you find the required information?",
